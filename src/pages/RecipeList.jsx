@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { getRecipeList } from "../services/Api.service";
 import styled from "styled-components";
 import RecipeCard from "../components/RecipeCard";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
+
+//#region Styles
 
 const RecipeListStyle = styled.div`
   display: flex;
@@ -10,13 +14,13 @@ const RecipeListStyle = styled.div`
   margin: 20px;
   width: 100vw;
   max-width: 1250px;
-  & > form {
+  & > #filterContainer {
     width: 200px;
     display: flex;
     flex-direction: column;
   }
 
-  & > div {
+  & > #recipeContainer {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -24,6 +28,7 @@ const RecipeListStyle = styled.div`
     justify-content: center;
   }
 `;
+//#endregion
 
 function RecipeList() {
   const [allRecipes, setAllRecipes] = useState([]); // Toutes les recettes
@@ -34,20 +39,11 @@ function RecipeList() {
     minPersons: "",
     maxPersons: "",
     maxPreparationTime: "",
-  });
+  }); // Filtres
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fonction asynchrone pour récupérer les recettes
-    const fetchRecipes = async () => {
-      try {
-        const response = await getRecipeList();
-        setAllRecipes(response);
-        setDisplayedRecipes(response); // Par défaut, toutes les recettes sont affichées
-      } catch (error) {
-        console.error("Erreur lors de la récupération des recettes:", error);
-      }
-    };
-
     // Appel de la fonction asynchrone
     fetchRecipes();
   }, []);
@@ -71,6 +67,21 @@ function RecipeList() {
     console.log(displayedRecipes);
   }, [filters, allRecipes]);
 
+  // Fonction asynchrone pour récupérer les recettes
+  const fetchRecipes = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getRecipeList();
+      setAllRecipes(response);
+      setDisplayedRecipes(response); // Par défaut, toutes les recettes sont affichées
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des recettes:", error);
+      setError(error);
+      setIsLoading(false);
+    }
+  };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevState) => ({
@@ -82,7 +93,7 @@ function RecipeList() {
   return (
     <RecipeListStyle>
       {/* Liste des filtres */}
-      <form>
+      <form id="filterContainer">
         <h3>Filtre</h3>
         <input
           type="text"
@@ -105,10 +116,16 @@ function RecipeList() {
       </form>
 
       {/* Liste des recettes */}
-      <div>
-        {displayedRecipes.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
-        ))}
+      <div id="recipeContainer">
+        {error !== null ? (
+          <Error error={error} />
+        ) : isLoading ? (
+          <Loader />
+        ) : (
+          displayedRecipes.map((recipe) => (
+            <RecipeCard key={recipe.id} recipe={recipe} />
+          ))
+        )}
       </div>
     </RecipeListStyle>
   );
