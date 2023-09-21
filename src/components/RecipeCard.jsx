@@ -54,6 +54,13 @@ const StyledLink = styled(Link)`
   color: inherit; // Pour conserver la couleur du texte
 `;
 
+const formatTime = (minutes) => {
+  if (minutes < 60) return `${minutes}min`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours}h${remainingMinutes ? remainingMinutes : ""}`;
+};
+
 const RecipeCard = ({ recipe }) => {
   return (
     <StyledLink to={`/recette/${recipe.id}`}>
@@ -65,6 +72,9 @@ const RecipeCard = ({ recipe }) => {
           <p className="recipeCardSubtitles">
             Pour {recipe.personnes}
             {recipe.personnes > 1 ? " personnes" : " personne"}
+          </p>
+          <p className="recipeCardSubtitles">
+            Temps de préparation : {formatTime(recipe.tempsPreparation)}
           </p>
         </div>
       </RecipeCardContainer>
