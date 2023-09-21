@@ -23,7 +23,7 @@ const RecipeListStyle = styled.div`
   & > #recipeContainer {
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-flow: row wrap;
     align-items: center;
     justify-content: center;
   }

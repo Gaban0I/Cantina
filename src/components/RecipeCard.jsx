@@ -1,46 +1,74 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 const RecipeCardContainer = styled.div`
   box-sizing: border-box;
   max-width: 230px;
   background-color: white;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 15px;
   margin: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
 
-  & > #recipeCardTitle,
-  .recipeCardSubtitles {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0px;
-    margin-bottom: 8px;
-    color: black;
+  &:hover {
+    transform: scale(1.05);
+    cursor: pointer;
   }
+
+  & > #recipeCardTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 12px;
+  }
+
   & > #recipeCardImage {
     width: 200px;
     height: 200px;
-    border-radius: 8px;
-    margin-bottom: 8px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    object-fit: cover;
   }
-  & > .recipeCardSubtitles {
-    font-size: 16px;
-    font-weight: normal;
+
+  & > #recipeCardInfos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    & > .recipeCardSubtitles {
+      font-size: 16px;
+      color: #777;
+      margin-bottom: 4px;
+      text-align: center;
+    }
   }
+`;
+const StyledLink = styled(Link)`
+  text-decoration: none; // Pour supprimer le soulignement du lien
+  color: inherit; // Pour conserver la couleur du texte
 `;
 
 const RecipeCard = ({ recipe }) => {
   return (
-    <RecipeCardContainer>
-      <p id="recipeCardTitle">{recipe.titre}</p>
-      <img id="recipeCardImage" src={recipe.photo} alt={recipe.titre} />
-      <p className="recipeCardSubtitles">{recipe.niveau}</p>
-      <p className="recipeCardSubtitles">{recipe.personnes}</p>
-    </RecipeCardContainer>
+    <StyledLink to={`/recette/${recipe.id}`}>
+      <RecipeCardContainer>
+        <p id="recipeCardTitle">{recipe.titre}</p>
+        <img id="recipeCardImage" src={recipe.photo} alt={recipe.titre} />
+        <div id="recipeCardInfos">
+          <p className="recipeCardSubtitles">Niveau : {recipe.niveau}</p>
+          <p className="recipeCardSubtitles">
+            Pour {recipe.personnes}
+            {recipe.personnes > 1 ? " personnes" : " personne"}
+          </p>
+        </div>
+      </RecipeCardContainer>
+    </StyledLink>
   );
 };
 
