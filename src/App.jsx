@@ -16,9 +16,9 @@ function App() {
       <Header />
       <Routes>
         <Route path="/recettes" element={<RecipeList />} />
-        <Route path="/recette/:id" exact element={RecipeDetail} />
-        <Route path="/add" exact component={AddRecipe} />
-        <Route path="/edit/:id" exact component={EditRecipe} />
+        <Route path="/recette/:id" element={<RecipeDetail />} />
+        <Route path="/add" element={<AddRecipe />} />
+        <Route path="/edit/:id" element={<EditRecipe />} />
         <Route path="*" element={<Navigate to="/recettes" replace />} />
       </Routes>
     </Router>
