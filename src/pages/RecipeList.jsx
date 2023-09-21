@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { getRecipeList } from "../services/Api.service";
 import styled from "styled-components";
 import RecipeCard from "../components/RecipeCard";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRecipes } from "../slices/recipeSlice";
 
 //#region Styles
 
@@ -31,63 +32,45 @@ const RecipeListStyle = styled.div`
 //#endregion
 
 function RecipeList() {
-  const [allRecipes, setAllRecipes] = useState([]); // Toutes les recettes
   const [displayedRecipes, setDisplayedRecipes] = useState([]); // Recettes affichées (après filtrage)
-  const [filters, setFilters] = useState({
-    title: "",
-    difficulty: "",
-    minPersons: "",
-    maxPersons: "",
-    maxPreparationTime: "",
-  }); // Filtres
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const dispatch = useDispatch();
+
+  // Utilisez useSelector pour accéder à l'état de votre store
+  const recipes = useSelector((state) => state.recipes.items);
+  const filters = useSelector((state) => state.recipes.filters);
+  const isLoading = useSelector((state) => state.recipes.status === "loading");
+  const error = useSelector((state) => state.recipes.error);
 
   useEffect(() => {
-    // Appel de la fonction asynchrone
-    fetchRecipes();
-  }, []);
+    // Dispatchez l'action pour charger les recettes
+    dispatch(fetchRecipes());
+  }, [dispatch]);
 
   useEffect(() => {
-    const filteredRecipes = allRecipes.filter((recipe) => {
-      if (
-        filters.title &&
-        !recipe.titre.toLowerCase().includes(filters.title.toLowerCase())
-      ) {
-        return false;
-      }
-      if (filters.difficulty && recipe.niveau !== filters.difficulty) {
-        return false;
-      }
-      // Vous pouvez ajouter d'autres conditions de filtrage ici...
-      return true;
-    });
-    setDisplayedRecipes(filteredRecipes);
-    console.log(filters.title);
-    console.log(displayedRecipes);
-  }, [filters, allRecipes]);
-
-  // Fonction asynchrone pour récupérer les recettes
-  const fetchRecipes = async () => {
-    setIsLoading(true);
-    try {
-      const response = await getRecipeList();
-      setAllRecipes(response);
-      setDisplayedRecipes(response); // Par défaut, toutes les recettes sont affichées
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Erreur lors de la récupération des recettes:", error);
-      setError(error);
-      setIsLoading(false);
+    if (recipes && recipes.length > 0) {
+      console.log("recipes", recipes);
+      const filteredRecipes = recipes.filter((recipe) => {
+        if (
+          filters.title &&
+          !recipe.titre.toLowerCase().includes(filters.title.toLowerCase())
+        ) {
+          return false;
+        }
+        if (filters.difficulty && recipe.niveau !== filters.difficulty) {
+          return false;
+        }
+        // Vous pouvez ajouter d'autres conditions de filtrage ici...
+        return true;
+      });
+      setDisplayedRecipes(filteredRecipes);
     }
-  };
+  }, [filters, recipes]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    // Dispatch l'action pour mettre à jour l'état des filtres
+    dispatch(setFilter({ name, value }));
   };
 
   return (
