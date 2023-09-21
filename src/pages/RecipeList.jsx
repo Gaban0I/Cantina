@@ -4,7 +4,7 @@ import RecipeCard from "../components/RecipeCard";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRecipes } from "../slices/recipeSlice";
+import { fetchRecipes, setFilter, resetFilters } from "../slices/recipeSlice";
 
 //#region Styles
 
@@ -12,21 +12,66 @@ const RecipeListStyle = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 20px;
+  margin: 40px;
   width: 100vw;
-  max-width: 1250px;
+  max-width: 1400px;
+  gap: 30px;
+
   & > #filterContainer {
-    width: 200px;
-    display: flex;
-    flex-direction: column;
+    flex-shrink: 0;
+    width: 250px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+
+    & > #numberPersonFilter {
+      display: flex;
+      flex-flow: row wrap;
+      #numberPersonMin,
+      #numberPersonMax {
+        margin: 0 10px;
+        font-size: 17px;
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+        .numberPerson {
+          width: 30%;
+          margin: 0 5px;
+        }
+      }
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin: 7.5px 0;
+      font-size: 16px;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
   }
 
   & > #recipeContainer {
-    width: 100%;
+    flex-grow: 1;
     display: flex;
     flex-flow: row wrap;
-    align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    gap: 10px;
   }
 `;
 //#endregion
@@ -49,7 +94,6 @@ function RecipeList() {
 
   useEffect(() => {
     if (recipes && recipes.length > 0) {
-      console.log("recipes", recipes);
       const filteredRecipes = recipes.filter((recipe) => {
         if (
           filters.title &&
@@ -60,7 +104,24 @@ function RecipeList() {
         if (filters.difficulty && recipe.niveau !== filters.difficulty) {
           return false;
         }
-        // Vous pouvez ajouter d'autres conditions de filtrage ici...
+        if (
+          filters.minPersons &&
+          recipe.personnes < parseInt(filters.minPersons)
+        ) {
+          return false;
+        }
+        if (
+          filters.maxPersons &&
+          recipe.personnes > parseInt(filters.maxPersons)
+        ) {
+          return false;
+        }
+        if (
+          filters.maxPreparationTime &&
+          recipe.tempsPreparation > parseInt(filters.maxPreparationTime)
+        ) {
+          return false;
+        }
         return true;
       });
       setDisplayedRecipes(filteredRecipes);
@@ -69,6 +130,19 @@ function RecipeList() {
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "maxPersons" && value < filters.minPersons) {
+      return;
+    }
+
+    if (
+      name === "minPersons" &&
+      filters.maxPersons &&
+      value > filters.maxPersons
+    ) {
+      return;
+    }
+
     // Dispatch l'action pour mettre à jour l'état des filtres
     dispatch(setFilter({ name, value }));
   };
@@ -95,6 +169,41 @@ function RecipeList() {
           <option value="jedi">Jedi</option>
           <option value="maitre">Maître</option>
         </select>
+        <div id="numberPersonFilter">
+          <div id="numberPersonMin">
+            <p>pour entre : </p>
+            <input
+              className="numberPerson"
+              type="number"
+              name="minPersons"
+              placeholder="Nb min de personnes"
+              value={filters.minPersons}
+              onChange={handleFilterChange}
+              min="1"
+            />
+          </div>
+          <div id="numberPersonMax">
+            <p> et : </p>
+            <input
+              className="numberPerson"
+              type="number"
+              name="maxPersons"
+              placeholder="Nb max de personnes"
+              value={filters.maxPersons}
+              onChange={handleFilterChange}
+              min={filters.minPersons || "0"}
+            />
+            <p>personnes</p>
+          </div>
+        </div>
+        <input
+          type="number"
+          name="maxPreparationTime"
+          placeholder="Temps de préparation max (en min)"
+          value={filters.maxPreparationTime}
+          onChange={handleFilterChange}
+          min="0"
+        />
         {/* Ajoutez d'autres champs de filtrage ici... */}
       </form>
 

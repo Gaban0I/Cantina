@@ -17,7 +17,7 @@ const recipeSlice = createSlice({
     filters: {
       title: "",
       difficulty: "",
-      minPersons: "",
+      minPersons: "1",
       maxPersons: "",
       maxPreparationTime: "",
     }
@@ -45,6 +45,9 @@ const recipeSlice = createSlice({
       .addCase(fetchRecipes.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.items = action.payload;
+        // Trouver le nombre maximum de personnes parmi toutes les recettes
+        const maxPersonsInRecipes = Math.max(...state.items.map(recipe => recipe.personnes));
+        state.filters.maxPersons = maxPersonsInRecipes.toString();
       })
       .addCase(fetchRecipes.rejected, (state, action) => {
         state.status = 'failed';
