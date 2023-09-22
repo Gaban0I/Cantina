@@ -13,7 +13,6 @@ const RecipeListStyle = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 40px;
   width: 100vw;
   max-width: 1400px;
   gap: 30px;

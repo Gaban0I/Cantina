@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 const RecipeWrapper = styled.div`
   width: 600px;
   max-width: 90vw;
-  margin: 40px auto;
+  margin: auto;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
