@@ -1,24 +1,27 @@
+import "react-toastify/dist/ReactToastify.css";
+
 import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
   Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
 } from "react-router-dom";
-import RecipeList from "./pages/RecipeList";
-import RecipeDetail from "./pages/RecipeDetail";
+
 import AddRecipe from "./pages/AddRecipe";
-import EditRecipe from "./pages/EditRecipe";
 import Header from "./components/Header";
+import RecipeDetail from "./pages/RecipeDetail";
+import RecipeList from "./pages/RecipeList";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <Router>
       <Header />
+      <ToastContainer />
       <Routes>
         <Route path="/recettes" element={<RecipeList />} />
         <Route path="/recette/:id" element={<RecipeDetail />} />
         <Route path="/add" element={<AddRecipe />} />
-        <Route path="/edit/:id" element={<EditRecipe />} />
         <Route path="*" element={<Navigate to="/recettes" replace />} />
       </Routes>
     </Router>

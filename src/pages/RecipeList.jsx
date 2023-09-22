@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import styled from "styled-components";
-import RecipeCard from "../components/RecipeCard";
-import Loader from "../components/Loader";
-import Error from "../components/Error";
+import { fetchRecipes, resetFilters, setFilter } from "../slices/recipeSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRecipes, setFilter, resetFilters } from "../slices/recipeSlice";
+import { useEffect, useState } from "react";
+
+import Error from "../components/Error";
+import Loader from "../components/Loader";
+import RecipeCard from "../components/RecipeCard";
+import styled from "styled-components";
 
 //#region Styles
 
