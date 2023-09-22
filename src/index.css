@@ -8,4 +8,6 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+    scroll-behavior: smooth;
+    overflow-y: scroll;
 }

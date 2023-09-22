@@ -68,10 +68,11 @@ const RecipeListStyle = styled.div`
   }
 
   & > #recipeContainer {
+    width: 100%;
     flex-grow: 1;
     display: flex;
     flex-flow: row wrap;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 10px;
   }
 `;

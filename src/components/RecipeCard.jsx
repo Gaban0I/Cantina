@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import styled from "styled-components";
 
 const RecipeCardContainer = styled.div`
   box-sizing: border-box;
@@ -25,6 +25,7 @@ const RecipeCardContainer = styled.div`
     font-weight: bold;
     color: #333;
     margin-bottom: 12px;
+    text-align: center;
   }
 
   & > #recipeCardImage {
