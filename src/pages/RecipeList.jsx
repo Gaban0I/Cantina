@@ -18,6 +18,9 @@ const RecipeListStyle = styled.div`
   gap: 30px;
 
   & > #filterContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     flex-shrink: 0;
     width: 250px;
     background-color: white;
@@ -52,13 +55,27 @@ const RecipeListStyle = styled.div`
     }
 
     input,
-    select {
+    select,
+    button {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #ddd;
       margin: 7.5px 0;
       font-size: 16px;
+    }
+
+    #ResetFilter {
+      width: 90%;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    #ResetFilter:hover {
+      background-color: #ddd;
+    }
+    #ResetFilter:active {
+      transform: scale(0.95);
     }
 
     input::placeholder {
@@ -200,11 +217,18 @@ function RecipeList() {
         <input
           type="number"
           name="maxPreparationTime"
-          placeholder="Temps de préparation max (en min)"
+          placeholder="Temps de préparation"
           value={filters.maxPreparationTime}
           onChange={handleFilterChange}
           min="0"
         />
+        <button
+          id="ResetFilter"
+          type="button"
+          onClick={() => dispatch(resetFilters())}
+        >
+          Réinitialiser les filtres
+        </button>
         {/* Ajoutez d'autres champs de filtrage ici... */}
       </form>
 
