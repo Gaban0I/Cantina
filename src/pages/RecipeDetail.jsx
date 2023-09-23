@@ -246,16 +246,18 @@ function RecipeDetail() {
     }
   };
 
+  function adjustHeight(textarea) {
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + "px";
+  }
+
   useEffect(() => {
     // Gestion de la hauteur des textarea en mode édition
     if (isEditing) {
       // Sélectionnez tous les textarea
       const textareas = document.querySelectorAll(".StepList textarea");
       // Fonction pour ajuster la hauteur de tous les textarea
-      function adjustHeight(textarea) {
-        textarea.style.height = "auto";
-        textarea.style.height = textarea.scrollHeight + "px";
-      }
+
       // Écoutez les événements qui peuvent affecter la taille du contenu de chaque textarea
       textareas.forEach((textarea) => {
         adjustHeight(textarea); // ajuster la hauteur initiale
@@ -356,7 +358,7 @@ function RecipeDetail() {
           <RecipeImage src={editedRecipe.photo} alt={recipe.titre} />
           <RecipeContent>
             <div id="ImageLink">
-              <p>Lien de l'image :</p>
+              <p>Lien de l&#39;image :</p>
               <input
                 type="text"
                 value={editedRecipe.photo}

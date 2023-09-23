@@ -4,6 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import PropTypes from "prop-types";
 
 const Suppression = ({ open, onConfirm, onClose }) => {
   const handleConfirmDelete = () => {
@@ -39,6 +40,12 @@ const Suppression = ({ open, onConfirm, onClose }) => {
       </DialogActions>
     </Dialog>
   );
+};
+
+Suppression.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default Suppression;

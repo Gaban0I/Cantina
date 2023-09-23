@@ -87,8 +87,10 @@ RecipeCard.propTypes = {
   recipe: PropTypes.shape({
     photo: PropTypes.string,
     titre: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
     niveau: PropTypes.string.isRequired,
     personnes: PropTypes.number.isRequired,
+    tempsPreparation: PropTypes.number.isRequired,
   }).isRequired,
 };
 
