@@ -6,6 +6,7 @@ import Error from "../components/Error";
 import Loader from "../components/Loader";
 import RecipeCard from "../components/RecipeCard";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 //#region Styles
 
@@ -16,6 +17,30 @@ const RecipeListStyle = styled.div`
   width: 100vw;
   max-width: 1400px;
   gap: 30px;
+  position: relative;
+  & > #createRecipeButton {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: white;
+    color: black;
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s ease-in-out;
+    &:hover {
+      transform: scale(1.05);
+    }
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 
   & > #filterContainer {
     display: flex;
@@ -73,6 +98,7 @@ const RecipeListStyle = styled.div`
 
     #ResetFilter:hover {
       background-color: #ddd;
+      transform: scale(1.05);
     }
     #ResetFilter:active {
       transform: scale(0.95);
@@ -90,6 +116,17 @@ const RecipeListStyle = styled.div`
     flex-flow: row wrap;
     justify-content: center;
     gap: 10px;
+    & > #noRecipe {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 90vh;
+      text-align: center;
+      align-items: center;
+      font-size: 35px;
+      color: #aaa;
+    }
   }
 `;
 //#endregion
@@ -229,8 +266,11 @@ function RecipeList() {
         >
           Réinitialiser les filtres
         </button>
-        {/* Ajoutez d'autres champs de filtrage ici... */}
       </form>
+      {/* Bouton de création de recette */}
+      <Link to={"/add"} id="createRecipeButton">
+        +
+      </Link>
 
       {/* Liste des recettes */}
       <div id="recipeContainer">
@@ -242,6 +282,9 @@ function RecipeList() {
           displayedRecipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))
+        )}
+        {displayedRecipes.length === 0 && !isLoading && (
+          <p id="noRecipe">Aucune recette ne correspond à vos critères</p>
         )}
       </div>
     </RecipeListStyle>
