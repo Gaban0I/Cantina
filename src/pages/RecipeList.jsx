@@ -1,4 +1,9 @@
-import { fetchRecipes, resetFilters, setFilter } from "../slices/recipeSlice";
+import {
+  fetchRecipes,
+  resetFilters,
+  setFilter,
+  resetEditingMode,
+} from "../slices/recipeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
@@ -32,7 +37,8 @@ const RecipeListStyle = styled.div`
     justify-content: center;
     align-items: center;
     text-decoration: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: visible;
+    box-shadow: 0 0 30px 6px rgba(255, 255, 255, 0.6);
     transition: transform 0.1s ease-in-out;
     &:hover {
       transform: scale(1.05);
@@ -43,6 +49,8 @@ const RecipeListStyle = styled.div`
   }
 
   & > #filterContainer {
+    position: sticky;
+    margin-top: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -51,7 +59,8 @@ const RecipeListStyle = styled.div`
     background-color: white;
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: visible;
+    box-shadow: 0 0 30px 6px rgba(255, 255, 255, 0.6);
     transition: transform 0.2s ease-in-out;
 
     & > #numberPersonFilter {
@@ -137,6 +146,8 @@ function RecipeList() {
   const dispatch = useDispatch();
 
   // Utilisez useSelector pour accéder à l'état de votre store
+
+  dispatch(resetEditingMode());
   const recipes = useSelector((state) => state.recipes.items);
   const filters = useSelector((state) => state.recipes.filters);
   const isLoading = useSelector((state) => state.recipes.status === "loading");
@@ -206,7 +217,7 @@ function RecipeList() {
     <RecipeListStyle>
       {/* Liste des filtres */}
       <form id="filterContainer">
-        <h3>Filtre</h3>
+        <h3>Filtres</h3>
         <input
           type="text"
           name="title"

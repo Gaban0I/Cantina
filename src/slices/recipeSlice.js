@@ -1,4 +1,3 @@
-// recipeSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getRecipeList } from "../services/Api.service";
 
@@ -24,6 +23,7 @@ const recipeSlice = createSlice({
       maxPersons: "",
       maxPreparationTime: "",
     },
+    editingMode: false,
   },
   reducers: {
     setFilter: (state, action) => {
@@ -39,6 +39,13 @@ const recipeSlice = createSlice({
         maxPersons: "",
         maxPreparationTime: "",
       };
+    },
+    switchEditingMode: (state) => {
+      state.editingMode = !state.editingMode;
+      console.log(state.editingMode);
+    },
+    resetEditingMode: (state) => {
+      state.editingMode = false;
     },
   },
   extraReducers: (builder) => {
@@ -69,5 +76,6 @@ const recipeSlice = createSlice({
   },
 });
 
-export const { setFilter, resetFilters } = recipeSlice.actions;
+export const { setFilter, resetFilters, switchEditingMode, resetEditingMode } =
+  recipeSlice.actions;
 export default recipeSlice.reducer;

@@ -4,6 +4,8 @@ import { addRecipe, updateRecipe } from "../services/Api.service";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { fetchRecipes, switchEditingMode } from "../slices/recipeSlice";
+import { useDispatch } from "react-redux";
 
 // #region Styles
 const RecipeContainer = styled.div`
@@ -14,7 +16,8 @@ const RecipeContainer = styled.div`
   margin: auto;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 55px 10px rgba(255, 255, 255, 0.6);
+  margin: 50px;
   position: relative;
   & > #EditCloseContainer {
     display: flex;
@@ -214,6 +217,7 @@ const defaultRecipe = {
 function RecipeForm({ initialData, mode }) {
   const [recipeData, setRecipeData] = useState(initialData);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Sélectionnez tous les textarea
@@ -277,8 +281,8 @@ function RecipeForm({ initialData, mode }) {
     // Soumission de la recette
     if (mode === "edit") {
       try {
-        const response = await updateRecipe(recipeData.id, recipeData);
-        handleReset(response.recette.id);
+        await updateRecipe(recipeData.id, recipeData);
+        dispatch(switchEditingMode());
         toast.success("Recette mise à jour avec succès !");
       } catch (error) {
         toast.error(error.message);
@@ -286,9 +290,8 @@ function RecipeForm({ initialData, mode }) {
     } else {
       try {
         const response = await addRecipe(recipeData);
-        if (response && response.recette && response.recette.id) {
-          handleReset(response.recette.id);
-        }
+        dispatch(fetchRecipes());
+        navigate(`/recette/${response.recette.id}`);
         toast.success("Recette ajoutée avec succès !");
       } catch (error) {
         toast.error(error.message);
@@ -296,11 +299,12 @@ function RecipeForm({ initialData, mode }) {
     }
   };
 
-  const handleReset = (id = "") => {
-    if (id === "") {
-      setRecipeData(defaultRecipe);
+  const handleReset = () => {
+    dispatch(switchEditingMode());
+    if (mode === "edit") {
+      setRecipeData(initialData);
     } else {
-      navigate(`/recettes`);
+      setRecipeData(defaultRecipe);
     }
   };
 

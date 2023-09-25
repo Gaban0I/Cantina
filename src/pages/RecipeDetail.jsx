@@ -8,7 +8,7 @@ import Error from "../components/Error";
 import Loader from "../components/Loader";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import Suppression from "../components/Suppression";
-import { fetchRecipes } from "../slices/recipeSlice";
+import { fetchRecipes, switchEditingMode } from "../slices/recipeSlice";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import RecipeForm from "./RecipeForm";
@@ -22,7 +22,8 @@ const RecipeWrapper = styled.div`
   margin: auto;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 55px 10px rgba(255, 255, 255, 0.6);
+  margin: 50px;
   position: relative;
   & > #EditCloseContainer {
     display: flex;
@@ -113,8 +114,7 @@ function RecipeDetail() {
     state.recipes.items.find((recipe) => recipe.id === parseInt(id))
   );
 
-  const [isEditing, setIsEditing] = useState(false);
-
+  const isEditing = useSelector((state) => state.recipes.editingMode);
   useEffect(() => {
     if (recipesStatus === "idle") {
       dispatch(fetchRecipes());
@@ -131,7 +131,7 @@ function RecipeDetail() {
 
   //#region Edit mode
   const handleEditClick = () => {
-    setIsEditing(true); // passe l'état d'édition à true
+    dispatch(switchEditingMode()); // passe l'état d'édition à true
   };
 
   //#endregion
