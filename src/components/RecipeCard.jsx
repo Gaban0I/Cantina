@@ -5,14 +5,15 @@ import styled from "styled-components";
 const RecipeCardContainer = styled.div`
   box-sizing: border-box;
   max-width: 230px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
   padding: 15px;
   margin: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+  box-shadow: 0 0 30px 6px rgba(255, 255, 255, 0.6);
   transition: transform 0.2s ease-in-out;
 
   &:hover {

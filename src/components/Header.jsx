@@ -21,7 +21,7 @@ const HeaderContainer = styled.header`
 function Header() {
   return (
     <HeaderContainer>
-      <Link to={"/recettes"}>What Do We Eat On Tatooin ?</Link>
+      <Link to={"/recettes"}>What Do We Eat On Tatooine ?</Link>
     </HeaderContainer>
   );
 }
