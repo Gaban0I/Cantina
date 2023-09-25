@@ -7,6 +7,8 @@ import PropTypes from "prop-types";
 
 // #region Styles
 const RecipeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 600px;
   max-width: 90vw;
   margin: auto;
@@ -172,6 +174,12 @@ const RecipeContent = styled.div`
 
   .ArticleTitle {
     margin: 10px 0px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    > p {
+      color: red;
+    }
   }
 
   input,
@@ -257,7 +265,7 @@ function RecipeForm({ initialData, mode }) {
     }
 
     if (
-      typeof recipeData.tempsPreparation !== "number" ||
+      typeof recipeData.personnes !== "number" ||
       recipeData.tempsPreparation <= 0
     ) {
       toast.error(
@@ -269,14 +277,11 @@ function RecipeForm({ initialData, mode }) {
     // Soumission de la recette
     if (mode === "edit") {
       try {
-        console.log(recipeData.id);
         const response = await updateRecipe(recipeData.id, recipeData);
-        if (response && response.recette && response.recette.id) {
-          handleReset(response.recette.id);
-        }
+        handleReset(response.recette.id);
         toast.success("Recette mise à jour avec succès !");
       } catch (error) {
-        toast.error("Erreur lors de la mise à jour de la recette.");
+        toast.error(error.message);
       }
     } else {
       try {
@@ -286,7 +291,7 @@ function RecipeForm({ initialData, mode }) {
         }
         toast.success("Recette ajoutée avec succès !");
       } catch (error) {
-        toast.error("Erreur lors de l'ajout de la recette.");
+        toast.error(error.message);
       }
     }
   };
@@ -295,7 +300,7 @@ function RecipeForm({ initialData, mode }) {
     if (id === "") {
       setRecipeData(defaultRecipe);
     } else {
-      navigate(`/recipe/${id}`);
+      navigate(`/recettes`);
     }
   };
 
@@ -344,16 +349,18 @@ function RecipeForm({ initialData, mode }) {
           />
         </div>
         <input
-          className="RecipeTitle"
+          className="RecipeTitle required-field"
           type="text"
           value={recipeData.titre}
+          placeholder="Titre de la recette"
           onChange={(e) =>
             setRecipeData({ ...recipeData, titre: e.target.value })
           }
         />
         <textarea
-          className="RecipeDescription"
+          className="RecipeDescription required-field"
           value={recipeData.description}
+          placeholder="Description de la recette"
           onChange={(e) =>
             setRecipeData({
               ...recipeData,
@@ -361,13 +368,16 @@ function RecipeForm({ initialData, mode }) {
             })
           }
         />
-        <h2 className="ArticleTitle">Ingrédients:</h2>
+        <h2 className="ArticleTitle">
+          Ingrédients: <p>*</p>
+        </h2>
         <ul className="IngredientList">
           {recipeData.ingredients.map(([quantity, ingredient], index) => (
             <li className="IngredientItem" key={index}>
               <input
                 type="text"
                 value={quantity}
+                placeholder="Quantité"
                 onChange={(e) =>
                   setRecipeData({
                     ...recipeData,
@@ -380,6 +390,7 @@ function RecipeForm({ initialData, mode }) {
               <input
                 type="text"
                 value={ingredient}
+                placeholder="Ingrédient"
                 onChange={(e) =>
                   setRecipeData({
                     ...recipeData,
@@ -396,12 +407,15 @@ function RecipeForm({ initialData, mode }) {
           ))}
         </ul>
         <button onClick={addIngredientField}>Ajouter un ingrédient</button>
-        <h2 className="ArticleTitle">Étapes:</h2>
+        <h2 className="ArticleTitle">
+          Étapes:<p>*</p>
+        </h2>
         <ol className="StepList">
           {recipeData.etapes.map((etape, index) => (
             <li className="StepItem" key={index}>
               <textarea
                 value={etape}
+                placeholder="Étape"
                 onChange={(e) =>
                   setRecipeData({
                     ...recipeData,
@@ -420,7 +434,9 @@ function RecipeForm({ initialData, mode }) {
         <button onClick={addStepField}>Ajouter une étape</button>
         <div>
           <label>
-            <h2 className="ArticleTitle">Niveau :</h2>
+            <h2 className="ArticleTitle">
+              Niveau :<p>*</p>
+            </h2>
             <select
               value={recipeData.niveau}
               onChange={(e) =>
@@ -435,14 +451,16 @@ function RecipeForm({ initialData, mode }) {
         </div>
         <div>
           <label>
-            <h2 className="ArticleTitle">Nombre de personnes :</h2>
+            <h2 className="ArticleTitle">
+              Nombre de personnes :<p>*</p>
+            </h2>
             <input
               type="number"
               value={recipeData.personnes}
               onChange={(e) =>
                 setRecipeData({
                   ...recipeData,
-                  personnes: e.target.value,
+                  personnes: parseInt(e.target.value, 10),
                 })
               }
             />
@@ -451,7 +469,7 @@ function RecipeForm({ initialData, mode }) {
         <div>
           <label>
             <h2 className="ArticleTitle">
-              Temps de préparation (en minutes) :
+              Temps de préparation (en minutes) :<p>*</p>
             </h2>
             <input
               type="number"
@@ -459,7 +477,7 @@ function RecipeForm({ initialData, mode }) {
               onChange={(e) =>
                 setRecipeData({
                   ...recipeData,
-                  tempsPreparation: e.target.value,
+                  tempsPreparation: parseInt(e.target.value, 10),
                 })
               }
             />

@@ -15,12 +15,14 @@ import RecipeForm from "./RecipeForm";
 
 //#region Styles
 const RecipeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 600px;
   max-width: 90vw;
   margin: auto;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
   position: relative;
   & > #EditCloseContainer {
     display: flex;
@@ -28,13 +30,14 @@ const RecipeWrapper = styled.div`
     position: absolute;
     right: 20px;
     top: 20px;
+    gap: 10px;
+    overflow: visible;
     & > .EditCloseIcon {
-      margin-right: 10px;
       cursor: pointer;
       color: #fff;
       border: 1px solid #fff;
       background-color: #000;
-      border-radius: 50%;
+      border-radius: 50px;
       padding: 5px;
       height: 30px;
       width: 30px;
