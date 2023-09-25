@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import React from "react";
 import styled from "@emotion/styled";
 
 const HeaderContainer = styled.header`
@@ -8,11 +7,14 @@ const HeaderContainer = styled.header`
   justify-content: center;
   align-items: center;
   & > a {
-    color: #333;
+    color: white;
     text-decoration: none;
     font-size: 40px;
     margin: 20px;
     font-weight: bold;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 

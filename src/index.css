@@ -1,13 +1,15 @@
-*{
-    margin: 0px;
-    padding: 0px;
-    box-sizing: border-box;
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
-body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    scroll-behavior: smooth;
-    overflow-y: scroll;
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+  background-color: #655f55;
 }

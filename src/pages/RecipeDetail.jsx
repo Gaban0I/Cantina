@@ -1,4 +1,4 @@
-import { deleteRecipe, updateRecipe } from "../services/Api.service";
+import { deleteRecipe } from "../services/Api.service";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,6 +11,7 @@ import Suppression from "../components/Suppression";
 import { fetchRecipes } from "../slices/recipeSlice";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import RecipeForm from "./RecipeForm";
 
 //#region Styles
 const RecipeWrapper = styled.div`
@@ -59,28 +60,6 @@ const RecipeContent = styled.div`
   flex-direction: column;
   padding: 20px;
   background-color: #f7f7f7;
-  & > #ImageLink {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  /* bouton d'ajout d'ingrédient et d'étape */
-  & > button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    margin: 7.5px 0;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: transparent;
-    transition: 0.2s ease-in-out;
-  }
-  & > button:hover {
-    background-color: #4caf50;
-    color: white;
-  }
   & > .RecipeTitle {
     font-size: 24px;
     margin-bottom: 16px;
@@ -97,102 +76,23 @@ const RecipeContent = styled.div`
     & > .IngredientItem {
       display: flex;
       gap: 8px;
-      & > input {
-        font-size: 16px;
-        color: #555;
-        margin-bottom: 8px;
-        width: 40%;
-        text-align: center;
-      }
-      & > button {
-        width: auto;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        margin-bottom: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: transparent;
-        transition: 0.2s ease-in-out;
-        &:hover {
-          background-color: #f44336;
-          color: white;
-        }
-      }
     }
   }
   & > .StepList {
-    & > .StepItem,
-    textarea {
+    & > .StepItem {
       font-size: 16px;
       color: #555;
       line-height: 1.5;
       width: 100%;
-    }
-    & > .StepItem {
       margin-bottom: 16px;
       display: flex;
       flex-direction: row;
       align-items: center;
-      & > button {
-        width: auto;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        margin-left: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: transparent;
-        transition: 0.2s ease-in-out;
-        &:hover {
-          background-color: #f44336;
-          color: white;
-        }
-      }
-    }
-  }
-  & > #buttonContainer {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    flex-flow: row wrap;
-    & > button {
-      width: 48%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      margin: 7.5px 0;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: transparent;
-      transition: 0.2s ease-in-out;
-    }
-    & > button:nth-child(1):hover {
-      background-color: #4caf50;
-      color: white;
-    }
-    & > button:nth-child(2):hover {
-      background-color: #f44336;
-      color: white;
     }
   }
 
   .ArticleTitle {
     margin: 10px 0px;
-  }
-
-  input,
-  select,
-  textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-  }
-
-  input::placeholder {
-    color: #aaa;
   }
 `;
 
@@ -211,7 +111,6 @@ function RecipeDetail() {
   );
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedRecipe, setEditedRecipe] = useState({});
 
   useEffect(() => {
     if (recipesStatus === "idle") {
@@ -230,76 +129,6 @@ function RecipeDetail() {
   //#region Edit mode
   const handleEditClick = () => {
     setIsEditing(true); // passe l'état d'édition à true
-    setEditedRecipe(recipe); // initialise l'état édité avec la recette actuelle
-  };
-
-  const handleSaveChanges = async () => {
-    try {
-      await updateRecipe(id, editedRecipe);
-      setIsEditing(false);
-      dispatch(fetchRecipes());
-      console.log("Recette mise à jour avec succès !");
-      toast.success("Recette mise à jour avec succès !");
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de la recette:", error);
-      toast.error("Erreur lors de la mise à jour de la recette.");
-    }
-  };
-
-  function adjustHeight(textarea) {
-    textarea.style.height = "auto";
-    textarea.style.height = textarea.scrollHeight + "px";
-  }
-
-  useEffect(() => {
-    // Gestion de la hauteur des textarea en mode édition
-    if (isEditing) {
-      // Sélectionnez tous les textarea
-      const textareas = document.querySelectorAll(".StepList textarea");
-      // Fonction pour ajuster la hauteur de tous les textarea
-
-      // Écoutez les événements qui peuvent affecter la taille du contenu de chaque textarea
-      textareas.forEach((textarea) => {
-        adjustHeight(textarea); // ajuster la hauteur initiale
-        textarea.addEventListener("input", () => adjustHeight(textarea));
-      });
-      return () => {
-        // Nettoyez les event listeners lorsque le composant est démonté ou le mode d'édition change
-        textareas.forEach((textarea) => {
-          textarea.removeEventListener("input", () => adjustHeight(textarea));
-        });
-      };
-    }
-  }, [isEditing]);
-
-  const addIngredientField = () => {
-    setEditedRecipe((prevState) => ({
-      ...prevState,
-      ingredients: [...prevState.ingredients, ["", ""]],
-    }));
-  };
-
-  const removeIngredientField = (indexToRemove) => {
-    setEditedRecipe((prevState) => ({
-      ...prevState,
-      ingredients: prevState.ingredients.filter(
-        (_, index) => index !== indexToRemove
-      ),
-    }));
-  };
-
-  const addStepField = () => {
-    setEditedRecipe((prevState) => ({
-      ...prevState,
-      etapes: [...prevState.etapes, ""],
-    }));
-  };
-
-  const removeStepField = (indexToRemove) => {
-    setEditedRecipe((prevState) => ({
-      ...prevState,
-      etapes: prevState.etapes.filter((_, index) => index !== indexToRemove),
-    }));
   };
 
   //#endregion
@@ -340,163 +169,21 @@ function RecipeDetail() {
   }
 
   return (
-    <RecipeWrapper>
-      <Suppression
-        open={openDeleteDialog}
-        onConfirm={handleConfirmDelete}
-        onClose={() => setOpenDeleteDialog(false)}
-      />
-      {!isEditing && (
-        <div id="EditCloseContainer">
-          <ModeEditIcon className="EditCloseIcon" onClick={handleEditClick} />
-          <CloseIcon className="EditCloseIcon" onClick={handleDeleteClick} />
-        </div>
-      )}
-
+    <>
       {isEditing ? (
-        <>
-          <RecipeImage src={editedRecipe.photo} alt={recipe.titre} />
-          <RecipeContent>
-            <div id="ImageLink">
-              <p>Lien de l&#39;image :</p>
-              <input
-                type="text"
-                value={editedRecipe.photo}
-                onChange={(e) =>
-                  setEditedRecipe({ ...editedRecipe, photo: e.target.value })
-                }
-              />
-            </div>
-            <input
-              className="RecipeTitle"
-              type="text"
-              value={editedRecipe.titre}
-              onChange={(e) =>
-                setEditedRecipe({ ...editedRecipe, titre: e.target.value })
-              }
-            />
-            <textarea
-              className="RecipeDescription"
-              value={editedRecipe.description}
-              onChange={(e) =>
-                setEditedRecipe({
-                  ...editedRecipe,
-                  description: e.target.value,
-                })
-              }
-            />
-            <h2 className="ArticleTitle">Ingrédients:</h2>
-            <ul className="IngredientList">
-              {editedRecipe.ingredients.map(([quantity, ingredient], index) => (
-                <li className="IngredientItem" key={index}>
-                  <input
-                    type="text"
-                    value={quantity}
-                    onChange={(e) =>
-                      setEditedRecipe({
-                        ...editedRecipe,
-                        ingredients: editedRecipe.ingredients.map((item, idx) =>
-                          idx === index ? [e.target.value, ingredient] : item
-                        ),
-                      })
-                    }
-                  />
-                  <input
-                    type="text"
-                    value={ingredient}
-                    onChange={(e) =>
-                      setEditedRecipe({
-                        ...editedRecipe,
-                        ingredients: editedRecipe.ingredients.map((item, idx) =>
-                          idx === index ? [quantity, e.target.value] : item
-                        ),
-                      })
-                    }
-                  />
-                  <button onClick={() => removeIngredientField(index)}>
-                    Supprimer
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <button onClick={addIngredientField}>Ajouter un ingrédient</button>
-            <h2 className="ArticleTitle">Étapes:</h2>
-            <ol className="StepList">
-              {editedRecipe.etapes.map((etape, index) => (
-                <li className="StepItem" key={index}>
-                  <textarea
-                    value={etape}
-                    onChange={(e) =>
-                      setEditedRecipe({
-                        ...editedRecipe,
-                        etapes: editedRecipe.etapes.map((step, idx) =>
-                          idx === index ? e.target.value : step
-                        ),
-                      })
-                    }
-                  />
-                  <button onClick={() => removeStepField(index)}>
-                    Supprimer cette étape
-                  </button>
-                </li>
-              ))}
-            </ol>
-            <button onClick={addStepField}>Ajouter une étape</button>
-            <div>
-              <label>
-                <h2 className="ArticleTitle">Niveau :</h2>
-                <select
-                  value={editedRecipe.niveau}
-                  onChange={(e) =>
-                    setEditedRecipe({ ...editedRecipe, niveau: e.target.value })
-                  }
-                >
-                  <option value="padawan">Padawan</option>
-                  <option value="jedi">Jedi</option>
-                  <option value="maitre">Maitre</option>
-                </select>
-              </label>
-            </div>
-            <div>
-              <label>
-                <h2 className="ArticleTitle">Nombre de personnes :</h2>
-                <input
-                  type="number"
-                  value={editedRecipe.personnes}
-                  onChange={(e) =>
-                    setEditedRecipe({
-                      ...editedRecipe,
-                      personnes: e.target.value,
-                    })
-                  }
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                <h2 className="ArticleTitle">
-                  Temps de préparation (en minutes) :
-                </h2>
-                <input
-                  type="number"
-                  value={editedRecipe.tempsPreparation}
-                  onChange={(e) =>
-                    setEditedRecipe({
-                      ...editedRecipe,
-                      tempsPreparation: e.target.value,
-                    })
-                  }
-                />
-              </label>
-            </div>
-            <div id="buttonContainer">
-              <button onClick={handleSaveChanges}>Enregistrer</button>
-              <button onClick={() => setIsEditing(false)}>Annuler</button>
-            </div>
-          </RecipeContent>
-        </>
+        <RecipeForm initialData={recipe} mode="edit" />
       ) : (
-        <>
+        <RecipeWrapper>
+          <Suppression
+            open={openDeleteDialog}
+            onConfirm={handleConfirmDelete}
+            onClose={() => setOpenDeleteDialog(false)}
+          />
+          <div id="EditCloseContainer">
+            <ModeEditIcon className="EditCloseIcon" onClick={handleEditClick} />
+            <CloseIcon className="EditCloseIcon" onClick={handleDeleteClick} />
+          </div>
+
           <RecipeImage src={recipe.photo} alt={recipe.titre} />
           <RecipeContent>
             <h1 className="RecipeTitle">{recipe.titre}</h1>
@@ -531,10 +218,11 @@ function RecipeDetail() {
               {formatTime(recipe.tempsPreparation)}
             </div>
           </RecipeContent>
-        </>
+        </RecipeWrapper>
       )}
-    </RecipeWrapper>
+    </>
   );
+
   //#endregion
 }
 
